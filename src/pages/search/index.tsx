@@ -5,11 +5,8 @@ import { connect } from 'umi';
 import styles from './index.less'
 import Popupty from '../popup'
 const  Search=(props:any)=>{
-    
-    console.log("搜索的props",props);
-    const {hotlist:{hostlist:{status,List,pageNo,loding}} ,dispatch}=props
+    const {hotlist:{hostlist:{status,tags}} ,dispatch}=props
     const [visible1 ,setVisible1]=useState(false)
-    const[username,setUsername]=useState("")
     const refs :any=useRef ()
     const searctClick=()=>{
         setVisible1(true)
@@ -18,22 +15,23 @@ const  Search=(props:any)=>{
         setVisible1(false)
     }
     const onSubmit = () => {
-        console.log("refs",refs);
-        
         let tex= refs.current.nativeElement.value
-        
-        setUsername(tex)
         getatate(tex)
         refs.current.nativeElement.value=""
         //refs.current.clear
     }
     
       async function getatate(tex:any) {
+        let url={"status":status,"pageNo":1,"username":tex,"tags":tags}
+        if(tags==="[]"){
+            delete url.tags
+        }
         await dispatch({
             type:"hostlist/queryUser",
-            payload:{"status":status,"pageNo":1,"username":tex},
+            payload:url,
             name:status,
-            username:tex
+            username:tex,
+            tags
         })
   }
     

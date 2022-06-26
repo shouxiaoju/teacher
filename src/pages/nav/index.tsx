@@ -2,18 +2,23 @@ import styles from './index.less'
 import { useRef ,useEffect,useState } from 'react'
 import { connect } from 'umi';
  function Nav(props:any){
-    console.log("导航的props",props);
-    const {hotlist:{hostlist:{status,List,pageNo,loding,username}} ,dispatch}=props
+    const {hotlist:{hostlist:{username,tags}} ,dispatch}=props
     const[csst,setCsst]=useState(1)
-
     async function getatate(name:any) {
         document.body.scrollTop = document.documentElement.scrollTop = 0;
         setCsst(name)
+        let url={"status":name,"pageNo":1,"username":`${username?username:""}`,"tags":tags}
+        console.log("导航的props的tags",tags);
+        if(tags==="[]"){
+            delete url.tags
+        }
         await dispatch({
             type:"hostlist/queryUser",
-            payload:{"status":name,"pageNo":1,username:`${username?username:""}`},
+            payload:url,
             name,
-            username
+            username,
+            tags
+
         })
   }
     const addstyle=(e:any)=>{

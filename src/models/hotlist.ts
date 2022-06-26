@@ -18,8 +18,8 @@ async function gethttp(query:any): Promise<any>{
 function queryParse(query:any){
   let queryText = "";
   for(let key in query){
-      queryText += `${key}=${query[key]}&`;
-      }
+    queryText += `${key}=${query[key]}&`;
+  }
   return queryText.slice(0,-1);
 }
 export default {
@@ -31,32 +31,36 @@ export default {
       totalRecord:1,
       loding:true,
       username:"",
-      tags:[],
+      tags:JSON.stringify([]),
       status :1
     },
-   
+  
     effects: {//异步操作
-      *queryUser ({ payload,name,username  }:any, { call, put }:any): any {
-        console.log("dispatch传递的参数",payload,name,username);
+      *queryUser ({ payload,name,username ,tags }:any, { call, put }:any): any {
         const  data  = yield call(gethttp,payload,username);
-        console.log("接口返回的数据",data);
-        yield put({ type: 'queryUserSuccess', payload: data ,name,username});
+        yield put({ type: 'queryUserSuccess', payload: data ,name,username,tags});
       },
     },
    
     reducers: {//同步操作
-      queryUserSuccess(state: any, { payload ,name,username}:any) {
-        console.log("name",name,username);
+      queryUserSuccess(state: any, { payload ,name,username,tags}:any) {
+        console.log("接收到的",name,username,tags);
         let obj={...state}
-        console.log(obj.status!==name);
+        console.log("之前的",obj);
         
         if(obj.status!==name){
           obj.List=[]
           obj.status=name
         }
+   
         if(obj.username!==username){
           obj.List=[]
           obj.username=username
+        }
+
+        if(obj.tags!==tags){
+          obj.List=[]
+          obj.tags=tags
         }
         obj.List= obj.List.concat(payload.List)
         obj.pageNo=payload.pageNo
